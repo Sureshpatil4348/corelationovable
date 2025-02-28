@@ -58,7 +58,7 @@ const NotificationSystem: React.FC = () => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+      <PopoverContent className="w-80 p-0 z-50" align="end">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-medium">Notifications</h3>
           {unreadCount > 0 && (
@@ -83,7 +83,7 @@ const NotificationSystem: React.FC = () => {
                 <li 
                   key={notification.id}
                   className={cn(
-                    "p-4 transition-colors hover:bg-muted/30",
+                    "p-4 transition-colors hover:bg-muted/30 cursor-pointer",
                     !notification.read && "bg-muted/50"
                   )}
                   onClick={() => markAsRead(notification.id)}

@@ -36,7 +36,7 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <div className="fixed inset-y-0 left-0 z-10 w-64 transform transition-transform duration-300 ease-in-out bg-background border-r border-border">
+    <div className="fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out bg-background border-r border-border">
       <div className="p-6">
         <div className="flex items-center gap-2 mb-8">
           <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">

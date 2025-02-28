@@ -89,9 +89,11 @@ const Analytics: React.FC = () => {
                       borderRadius: '0.375rem',
                       border: '1px solid #e5e7eb',
                       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                      zIndex: 50,
                     }}
+                    wrapperStyle={{ zIndex: 50 }}
                   />
-                  <Legend />
+                  <Legend verticalAlign="bottom" height={36} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -124,7 +126,7 @@ const Analytics: React.FC = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-6 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>

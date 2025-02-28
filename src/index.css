@@ -159,3 +159,21 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.5);
 }
+
+/* Fix z-index issues */
+.popover-content {
+  z-index: 100;
+}
+
+.tooltip-content {
+  z-index: 100;
+}
+
+.dropdown-content {
+  z-index: 100;
+}
+
+/* Ensure proper positioning */
+main {
+  position: relative;
+}

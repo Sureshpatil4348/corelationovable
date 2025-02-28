@@ -45,7 +45,7 @@ const LineChart: React.FC<LineChartProps> = ({ title, data, className }) => {
         <CardTitle className="text-base font-medium">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RechartsLineChart
               data={transformedData}
@@ -53,7 +53,7 @@ const LineChart: React.FC<LineChartProps> = ({ title, data, className }) => {
                 top: 5,
                 right: 10,
                 left: 10,
-                bottom: 5,
+                bottom: 25,
               }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
@@ -62,11 +62,14 @@ const LineChart: React.FC<LineChartProps> = ({ title, data, className }) => {
                 tick={{ fontSize: 12 }} 
                 tickLine={false}
                 axisLine={{ stroke: '#e5e7eb', strokeWidth: 1 }}
+                height={40}
+                tickMargin={10}
               />
               <YAxis 
                 tick={{ fontSize: 12 }} 
                 tickLine={false}
                 axisLine={{ stroke: '#e5e7eb', strokeWidth: 1 }}
+                width={40}
               />
               <Tooltip 
                 contentStyle={{ 
@@ -74,9 +77,11 @@ const LineChart: React.FC<LineChartProps> = ({ title, data, className }) => {
                   borderRadius: '0.375rem',
                   border: '1px solid #e5e7eb',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  zIndex: 50,
                 }}
+                wrapperStyle={{ zIndex: 50 }}
               />
-              <Legend />
+              <Legend wrapperStyle={{ paddingTop: 15 }} />
               {data.datasets.map((dataset, index) => (
                 <Line
                   key={index}

@@ -17,7 +17,7 @@ const Strategy: React.FC = () => {
 
   return (
     <Layout>
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-6 pb-8">
         <Card>
           <CardHeader>
             <CardTitle>Strategy Parameters</CardTitle>
