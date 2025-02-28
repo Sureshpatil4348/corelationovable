@@ -15,6 +15,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { currencyPairs, timeframes } from '@/utils/mockData';
+import { Separator } from '@/components/ui/separator';
 
 interface StrategyFormProps {
   initialParameters: StrategyParameters;
@@ -49,11 +50,6 @@ const StrategyForm: React.FC<StrategyFormProps> = ({
     }
     
     onSubmit(parameters);
-    
-    toast({
-      title: "Strategy Updated",
-      description: "Your strategy parameters have been updated successfully",
-    });
   };
 
   return (
@@ -82,6 +78,20 @@ const StrategyForm: React.FC<StrategyFormProps> = ({
           </div>
 
           <div>
+            <Label htmlFor="lotSize1">Lot Size for {parameters.currencyPair1}</Label>
+            <Input
+              id="lotSize1"
+              type="number"
+              step="0.01"
+              min="0.01"
+              max="10"
+              value={parameters.lotSize1}
+              onChange={(e) => handleChange('lotSize1', parseFloat(e.target.value))}
+              className="mt-1"
+            />
+          </div>
+
+          <div>
             <Label htmlFor="currencyPair2">Currency Pair 2</Label>
             <Select
               value={parameters.currencyPair2}
@@ -100,6 +110,20 @@ const StrategyForm: React.FC<StrategyFormProps> = ({
                 </SelectGroup>
               </SelectContent>
             </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="lotSize2">Lot Size for {parameters.currencyPair2}</Label>
+            <Input
+              id="lotSize2"
+              type="number"
+              step="0.01"
+              min="0.01"
+              max="10"
+              value={parameters.lotSize2}
+              onChange={(e) => handleChange('lotSize2', parseFloat(e.target.value))}
+              className="mt-1"
+            />
           </div>
 
           <div>
@@ -123,18 +147,37 @@ const StrategyForm: React.FC<StrategyFormProps> = ({
             </Select>
           </div>
 
+          <Separator className="my-4" />
+
           <div>
-            <Label htmlFor="lotSize">Lot Size</Label>
+            <Label htmlFor="magicNumber">Magic Number</Label>
             <Input
-              id="lotSize"
+              id="magicNumber"
               type="number"
-              step="0.01"
-              min="0.01"
-              max="10"
-              value={parameters.lotSize}
-              onChange={(e) => handleChange('lotSize', parseFloat(e.target.value))}
+              min="1"
+              max="999999"
+              value={parameters.magicNumber}
+              onChange={(e) => handleChange('magicNumber', parseInt(e.target.value))}
               className="mt-1"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              Unique identifier for trades from this strategy
+            </p>
+          </div>
+
+          <div>
+            <Label htmlFor="comment">Trade Comment</Label>
+            <Input
+              id="comment"
+              type="text"
+              maxLength={50}
+              value={parameters.comment}
+              onChange={(e) => handleChange('comment', e.target.value)}
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Comment that will be attached to each trade
+            </p>
           </div>
         </div>
 

@@ -32,7 +32,10 @@ export interface StrategyParameters {
   entryThreshold: number;
   exitThreshold: number;
   timeframe: string;
-  lotSize: number;
+  lotSize1: number;
+  lotSize2: number;
+  magicNumber: number;
+  comment: string;
 }
 
 export interface ChartData {

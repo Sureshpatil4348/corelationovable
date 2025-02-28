@@ -73,7 +73,10 @@ export const mockStrategyParameters: StrategyParameters = {
   entryThreshold: 0.8,
   exitThreshold: 0.5,
   timeframe: "H1",
-  lotSize: 0.1
+  lotSize1: 0.1,
+  lotSize2: 0.1,
+  magicNumber: 12345,
+  comment: "Correlation Strategy"
 };
 
 export const mockPerformanceMetrics: PerformanceMetrics = {

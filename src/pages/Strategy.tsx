@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import StrategyForm from '@/components/StrategyForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -27,20 +27,45 @@ interface Strategy {
   isActive: boolean;
 }
 
+const LOCAL_STORAGE_KEY = 'trading-strategies';
+
 const Strategy: React.FC = () => {
   const { toast } = useToast();
-  const [strategies, setStrategies] = useState<Strategy[]>([
-    {
-      id: '1',
-      name: 'EUR/USD & GBP/USD Correlation',
-      parameters: mockStrategyParameters,
-      isActive: true
-    }
-  ]);
-  
-  const [activeStrategy, setActiveStrategy] = useState<string>('1');
+  const [strategies, setStrategies] = useState<Strategy[]>([]);
+  const [activeStrategy, setActiveStrategy] = useState<string>('');
   const [editMode, setEditMode] = useState<boolean>(false);
   const [newStrategyName, setNewStrategyName] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<string>('list');
+  
+  // Load strategies from localStorage on initial render
+  useEffect(() => {
+    const savedStrategies = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (savedStrategies) {
+      const parsedStrategies = JSON.parse(savedStrategies);
+      setStrategies(parsedStrategies);
+      if (parsedStrategies.length > 0) {
+        setActiveStrategy(parsedStrategies[0].id);
+      }
+    } else {
+      // Set default strategy if no saved strategies
+      const defaultStrategy: Strategy = {
+        id: '1',
+        name: 'EUR/USD & GBP/USD Correlation',
+        parameters: mockStrategyParameters,
+        isActive: true
+      };
+      setStrategies([defaultStrategy]);
+      setActiveStrategy('1');
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify([defaultStrategy]));
+    }
+  }, []);
+  
+  // Save strategies to localStorage whenever they change
+  useEffect(() => {
+    if (strategies.length > 0) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(strategies));
+    }
+  }, [strategies]);
   
   const handleSubmit = (updatedParameters: StrategyParameters) => {
     setStrategies(prevStrategies => 
@@ -75,6 +100,9 @@ const Strategy: React.FC = () => {
     setNewStrategyName('');
     setEditMode(false);
     
+    // Automatically switch to edit tab for the new strategy
+    setActiveTab('edit');
+    
     toast({
       title: "New Strategy Added",
       description: `${newStrategy.name} has been added to your strategies`,
@@ -85,7 +113,8 @@ const Strategy: React.FC = () => {
     setStrategies(strategies.filter(strategy => strategy.id !== id));
     
     if (activeStrategy === id) {
-      setActiveStrategy(strategies[0]?.id || '');
+      const remainingStrategies = strategies.filter(strategy => strategy.id !== id);
+      setActiveStrategy(remainingStrategies[0]?.id || '');
     }
     
     toast({
@@ -118,16 +147,12 @@ const Strategy: React.FC = () => {
   };
 
   const switchToEditTab = () => {
-    // Find the edit tab element and cast it to HTMLElement to use click()
-    const editTab = document.querySelector('[data-value="edit"]') as HTMLElement;
-    if (editTab) {
-      editTab.click();
-    }
+    setActiveTab('edit');
   };
 
   return (
     <Layout>
-      <Tabs defaultValue="list" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="list" className="flex items-center gap-2">
             <ListIcon className="h-4 w-4" />
@@ -190,56 +215,64 @@ const Strategy: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {strategies.map((strategy) => (
-                      <TableRow key={strategy.id}>
-                        <TableCell className="font-medium">{strategy.name}</TableCell>
-                        <TableCell>
-                          {strategy.parameters.currencyPair1} & {strategy.parameters.currencyPair2}
+                    {strategies.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+                          No strategies yet. Add your first strategy to get started.
                         </TableCell>
-                        <TableCell>
-                          <Badge variant={strategy.isActive ? "default" : "outline"}>
-                            {strategy.isActive ? "Active" : "Inactive"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                setActiveStrategy(strategy.id);
-                                switchToEditTab();
-                              }}
-                              title="Edit"
-                            >
-                              <Settings2Icon className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => toggleStrategy(strategy.id)}
-                              title={strategy.isActive ? "Pause" : "Start"}
-                            >
-                              {strategy.isActive ? (
-                                <PauseIcon className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <PlayIcon className="h-4 w-4 text-profit" />
-                              )}
-                            </Button>
-                            {strategies.length > 1 && (
+                      </TableRow>
+                    ) : (
+                      strategies.map((strategy) => (
+                        <TableRow key={strategy.id}>
+                          <TableCell className="font-medium">{strategy.name}</TableCell>
+                          <TableCell>
+                            {strategy.parameters.currencyPair1} & {strategy.parameters.currencyPair2}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={strategy.isActive ? "default" : "outline"}>
+                              {strategy.isActive ? "Active" : "Inactive"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => deleteStrategy(strategy.id)}
-                                title="Delete"
+                                onClick={() => {
+                                  setActiveStrategy(strategy.id);
+                                  switchToEditTab();
+                                }}
+                                title="Edit"
                               >
-                                <Trash2Icon className="h-4 w-4 text-loss" />
+                                <Settings2Icon className="h-4 w-4" />
                               </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => toggleStrategy(strategy.id)}
+                                title={strategy.isActive ? "Pause" : "Start"}
+                              >
+                                {strategy.isActive ? (
+                                  <PauseIcon className="h-4 w-4 text-muted-foreground" />
+                                ) : (
+                                  <PlayIcon className="h-4 w-4 text-profit" />
+                                )}
+                              </Button>
+                              {strategies.length > 1 && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => deleteStrategy(strategy.id)}
+                                  title="Delete"
+                                >
+                                  <Trash2Icon className="h-4 w-4 text-loss" />
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </div>
