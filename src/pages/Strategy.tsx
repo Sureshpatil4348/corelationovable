@@ -117,6 +117,14 @@ const Strategy: React.FC = () => {
     return strategies.find(strategy => strategy.id === activeStrategy) || strategies[0];
   };
 
+  const switchToEditTab = () => {
+    // Find the edit tab element and cast it to HTMLElement to use click()
+    const editTab = document.querySelector('[data-value="edit"]') as HTMLElement;
+    if (editTab) {
+      editTab.click();
+    }
+  };
+
   return (
     <Layout>
       <Tabs defaultValue="list" className="w-full">
@@ -200,7 +208,7 @@ const Strategy: React.FC = () => {
                               size="icon"
                               onClick={() => {
                                 setActiveStrategy(strategy.id);
-                                document.querySelector('[data-value="edit"]')?.click();
+                                switchToEditTab();
                               }}
                               title="Edit"
                             >
