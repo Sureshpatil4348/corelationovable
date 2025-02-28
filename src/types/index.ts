@@ -43,7 +43,7 @@ export interface ChartData {
   datasets: {
     label: string;
     data: number[];
-    backgroundColor?: string;
+    backgroundColor?: string | string[];
     borderColor?: string;
     fill?: boolean;
   }[];
@@ -66,4 +66,15 @@ export interface PerformanceMetrics {
   averageLoss: number;
   profitFactor: number;
   totalProfit: number;
+  sharpeRatio?: number;
+  maxDrawdown?: number;
+  avgTradeDuration?: string;
+  tradesPerPair?: Record<string, number>;
+  profitPerStrategy?: Record<string, number>;
+  profitPerPair?: Record<string, number>;
+}
+
+export interface StrategySummary {
+  name: string;
+  metrics: PerformanceMetrics;
 }

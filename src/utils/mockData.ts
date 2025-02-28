@@ -1,5 +1,4 @@
-
-import { Trade, StrategyParameters, PerformanceMetrics, Notification } from '@/types';
+import { Trade, StrategyParameters, PerformanceMetrics, Notification, StrategySummary } from '@/types';
 
 export const mockTrades: Trade[] = [
   {
@@ -60,6 +59,45 @@ export const mockTrades: Trade[] = [
     profit: -25,
     status: "closed",
     strategy: "RSI Correlation"
+  },
+  {
+    id: "6",
+    symbol: "USDJPY",
+    type: "sell",
+    openTime: "2023-10-15T11:30:00Z",
+    closeTime: "2023-10-18T14:20:00Z",
+    openPrice: 149.85,
+    closePrice: 148.75,
+    lots: 0.2,
+    profit: 160,
+    status: "closed",
+    strategy: "Mean Reversion"
+  },
+  {
+    id: "7",
+    symbol: "GBPJPY",
+    type: "buy",
+    openTime: "2023-10-20T09:45:00Z",
+    closeTime: "2023-10-22T16:30:00Z",
+    openPrice: 182.45,
+    closePrice: 183.65,
+    lots: 0.15,
+    profit: 120,
+    status: "closed",
+    strategy: "Mean Reversion"
+  },
+  {
+    id: "8",
+    symbol: "AUDUSD",
+    type: "sell",
+    openTime: "2023-10-25T14:15:00Z",
+    closeTime: "2023-10-27T10:10:00Z",
+    openPrice: 0.6435,
+    closePrice: 0.6385,
+    lots: 0.25,
+    profit: 75,
+    status: "closed",
+    strategy: "Trend Following"
   }
 ];
 
@@ -87,8 +125,117 @@ export const mockPerformanceMetrics: PerformanceMetrics = {
   averageProfit: 25.4,
   averageLoss: -18.7,
   profitFactor: 1.78,
-  totalProfit: 845.3
+  totalProfit: 845.3,
+  sharpeRatio: 1.65,
+  maxDrawdown: 12.3,
+  avgTradeDuration: "15h 24m",
+  tradesPerPair: {
+    "EURUSD": 32,
+    "GBPUSD": 28,
+    "USDJPY": 24,
+    "GBPJPY": 18,
+    "AUDUSD": 13
+  },
+  profitPerStrategy: {
+    "RSI Correlation": 328.5,
+    "Mean Reversion": 280.0,
+    "Trend Following": 236.8
+  },
+  profitPerPair: {
+    "EURUSD": 215.4,
+    "GBPUSD": 195.2,
+    "USDJPY": 160.8,
+    "GBPJPY": 144.5,
+    "AUDUSD": 129.4
+  }
 };
+
+export const mockStrategySummaries: StrategySummary[] = [
+  {
+    name: "RSI Correlation",
+    metrics: {
+      totalTrades: 45,
+      winningTrades: 29,
+      losingTrades: 16,
+      winRate: 64.4,
+      averageProfit: 27.5,
+      averageLoss: -19.2,
+      profitFactor: 1.85,
+      totalProfit: 328.5,
+      sharpeRatio: 1.72,
+      maxDrawdown: 9.8,
+      avgTradeDuration: "12h 45m",
+      tradesPerPair: {
+        "EURUSD": 18,
+        "GBPUSD": 15,
+        "USDJPY": 7,
+        "GBPJPY": 5
+      },
+      profitPerPair: {
+        "EURUSD": 120.5,
+        "GBPUSD": 98.3,
+        "USDJPY": 65.7,
+        "GBPJPY": 44.0
+      }
+    }
+  },
+  {
+    name: "Mean Reversion",
+    metrics: {
+      totalTrades: 38,
+      winningTrades: 23,
+      losingTrades: 15,
+      winRate: 60.5,
+      averageProfit: 24.8,
+      averageLoss: -17.5,
+      profitFactor: 1.70,
+      totalProfit: 280.0,
+      sharpeRatio: 1.58,
+      maxDrawdown: 11.2,
+      avgTradeDuration: "18h 20m",
+      tradesPerPair: {
+        "USDJPY": 12,
+        "EURUSD": 10,
+        "GBPJPY": 9,
+        "GBPUSD": 7
+      },
+      profitPerPair: {
+        "USDJPY": 85.2,
+        "EURUSD": 75.4,
+        "GBPJPY": 68.9,
+        "GBPUSD": 50.5
+      }
+    }
+  },
+  {
+    name: "Trend Following",
+    metrics: {
+      totalTrades: 32,
+      winningTrades: 20,
+      losingTrades: 12,
+      winRate: 62.5,
+      averageProfit: 22.6,
+      averageLoss: -16.9,
+      profitFactor: 1.75,
+      totalProfit: 236.8,
+      sharpeRatio: 1.62,
+      maxDrawdown: 10.5,
+      avgTradeDuration: "16h 40m",
+      tradesPerPair: {
+        "GBPUSD": 10,
+        "AUDUSD": 8,
+        "EURUSD": 8,
+        "GBPJPY": 6
+      },
+      profitPerPair: {
+        "GBPUSD": 82.4,
+        "AUDUSD": 65.3,
+        "EURUSD": 55.6,
+        "GBPJPY": 33.5
+      }
+    }
+  }
+];
 
 export const mockNotifications: Notification[] = [
   {
