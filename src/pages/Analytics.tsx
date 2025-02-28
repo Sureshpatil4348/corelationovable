@@ -3,12 +3,14 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import LineChart from '@/components/charts/LineChart';
 import BarChart from '@/components/charts/BarChart';
+import TradeTable from '@/components/TradeTable';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,8 +18,10 @@ import {
   mockBarChartData,
   mockPieChartData,
   mockPerformanceMetrics,
+  mockTrades,
 } from '@/utils/mockData';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
 
 const Analytics: React.FC = () => {
   // Transform pie chart data for Recharts
@@ -27,9 +31,51 @@ const Analytics: React.FC = () => {
   }));
 
   const COLORS = mockPieChartData.datasets[0].backgroundColor || ['#36A2EB', '#FF6384'];
+  
+  // Get active trades
+  const activeTrades = mockTrades.filter(trade => trade.status === 'open');
 
   return (
     <Layout>
+      {/* Current Running Trades Section */}
+      <div className="grid grid-cols-1 gap-6 mb-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div>
+              <CardTitle className="text-base font-medium">Current Running Trades</CardTitle>
+              <CardDescription>Real-time active positions</CardDescription>
+            </div>
+            <Button variant="outline" size="sm">
+              Refresh
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {activeTrades.length > 0 ? (
+              <TradeTable trades={activeTrades} />
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                No active trades at the moment
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="flex justify-between border-t pt-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <ArrowUpIcon className="h-3 w-3 text-profit mr-1" />
+                <span className="text-sm">Buy: {activeTrades.filter(t => t.type === 'buy').length}</span>
+              </div>
+              <div className="flex items-center">
+                <ArrowDownIcon className="h-3 w-3 text-loss mr-1" />
+                <span className="text-sm">Sell: {activeTrades.filter(t => t.type === 'sell').length}</span>
+              </div>
+            </div>
+            <div className="text-sm">
+              Total Lots: {activeTrades.reduce((acc, trade) => acc + trade.lots, 0).toFixed(2)}
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <Card>
           <CardHeader className="pb-2">
