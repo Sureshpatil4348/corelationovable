@@ -1,80 +1,128 @@
+import React from "react";
+import {
+  LayoutDashboard,
+  Braces,
+  BarChart3,
+  LineChart,
+  Settings,
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { useMT5 } from "@/context/MT5Context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  ChartLineIcon, 
-  SettingsIcon,
-  NetworkIcon,
-  RefreshCwIcon
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+// Define the structure for navigation items
+interface NavItem {
+  title: string;
+  href: string;
+  icon: React.ComponentType<any>;
+}
+
+// Update the navigation items array to include the new Indicators page
+export const navigationItems = [
+  {
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Strategies",
+    href: "/strategy",
+    icon: Braces,
+  },
+  {
+    title: "Indicators",
+    href: "/indicators",
+    icon: BarChart3,
+  },
+  {
+    title: "Analytics",
+    href: "/analytics",
+    icon: LineChart,
+  },
+  {
+    title: "Settings",
+    href: "/settings",
+    icon: Settings,
+  },
+];
 
 const Sidebar: React.FC = () => {
-  const location = useLocation();
-  
-  const navItems = [
-    { 
-      path: '/dashboard', 
-      label: 'Dashboard', 
-      icon: <NetworkIcon className="h-5 w-5" /> 
-    },
-    { 
-      path: '/strategy', 
-      label: 'Strategy', 
-      icon: <RefreshCwIcon className="h-5 w-5" /> 
-    },
-    { 
-      path: '/analytics', 
-      label: 'Analytics', 
-      icon: <ChartLineIcon className="h-5 w-5" /> 
-    },
-    { 
-      path: '/settings', 
-      label: 'Settings', 
-      icon: <SettingsIcon className="h-5 w-5" /> 
-    },
-  ];
+  const { accountInfo, disconnect, isConnected } = useMT5();
+  const { toast } = useToast();
+
+  const handleDisconnect = async () => {
+    const result = await disconnect();
+    if (result.disconnected) {
+      toast({
+        title: "Disconnected",
+        description: "Successfully disconnected from MT5.",
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to disconnect from MT5.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
-    <div className="fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out bg-background border-r border-border">
-      <div className="p-6">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
-            <NetworkIcon className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <h2 className="text-lg font-medium">Trading Framework</h2>
-        </div>
-        
-        <nav className="space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
-                location.pathname === item.path
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
+    <div className="flex flex-col w-64 border-r border-r-muted bg-secondary">
+      <div className="p-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="flex h-8 w-full items-center justify-between rounded-md">
+              <div className="flex items-center gap-2">
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" alt="Avatar" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium leading-none">
+                  {accountInfo?.name || "Guest"}
+                </span>
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-80" align="end" forceMount>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {isConnected && (
+              <DropdownMenuItem onClick={handleDisconnect}>
+                Disconnect MT5
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <nav className="flex-1 px-2 py-4">
+        <ul>
+          {navigationItems.map((item) => (
+            <li key={item.title}>
+              <NavLink
+                to={item.href}
+                className={({ isActive }) =>
+                  `flex items-center p-2 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground ${
+                    isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+                  }`
+                }
+              >
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.title}
+              </NavLink>
+            </li>
           ))}
-        </nav>
-      </div>
-      
-      <div className="absolute bottom-0 w-full p-6">
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <div className="flex-shrink-0 h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-            <span className="text-xs font-medium">AT</span>
-          </div>
-          <div>
-            <p className="font-medium text-foreground">Automated Trading</p>
-            <p className="text-xs">Bridge Active</p>
-          </div>
-        </div>
-      </div>
+        </ul>
+      </nav>
     </div>
   );
 };

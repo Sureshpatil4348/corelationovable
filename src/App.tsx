@@ -11,6 +11,7 @@ import Strategy from "./pages/Strategy";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import Indicators from "./pages/Indicators";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/strategy" element={<Strategy />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/indicators" element={<Indicators />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
