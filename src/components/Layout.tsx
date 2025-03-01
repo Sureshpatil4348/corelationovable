@@ -22,12 +22,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
-      <main className="flex-1 pl-64 overflow-x-hidden">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
+      <div className="flex-1 overflow-x-hidden">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-semibold tracking-tight animate-fade-in">
               {location.pathname === '/dashboard' && 'Dashboard'}
               {location.pathname === '/strategy' && 'Strategy Management'}
+              {location.pathname === '/indicators' && 'Indicators'}
               {location.pathname === '/analytics' && 'Analytics'}
               {location.pathname === '/settings' && 'Settings'}
             </h1>
@@ -40,7 +41,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {children}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
