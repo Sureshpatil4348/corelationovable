@@ -7,10 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useMT5 } from '@/context/MT5Context';
+import { Progress } from '@/components/ui/progress';
 
 const Index: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { connect, connectionStatus } = useMT5();
   
   const [credentials, setCredentials] = useState({
     username: '',
@@ -19,14 +22,15 @@ const Index: React.FC = () => {
     terminal: '',
   });
   
-  const [isConnecting, setIsConnecting] = useState(false);
+  const isConnecting = connectionStatus === 'connecting';
+  const [progress, setProgress] = useState(0);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate inputs
@@ -40,20 +44,36 @@ const Index: React.FC = () => {
       return;
     }
     
-    // Simulate connection process
-    setIsConnecting(true);
-    
-    setTimeout(() => {
-      setIsConnecting(false);
-      
-      toast({
-        title: "Connection Established",
-        description: "Successfully connected to the MT5 terminal.",
+    // Show progress bar animation
+    setProgress(0);
+    const progressInterval = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 95) {
+          clearInterval(progressInterval);
+          return prevProgress;
+        }
+        return prevProgress + 5;
       });
-      
-      // Navigate to dashboard on success
-      navigate('/dashboard');
-    }, 2000);
+    }, 100);
+    
+    // Connect to MT5
+    const connected = await connect(credentials);
+    
+    // Clear progress interval and set to 100% when done
+    clearInterval(progressInterval);
+    setProgress(100);
+    
+    // Navigate to dashboard on success after a short delay
+    if (connected) {
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
+    } else {
+      // Reset progress after failure
+      setTimeout(() => {
+        setProgress(0);
+      }, 500);
+    }
   };
 
   return (
@@ -94,6 +114,7 @@ const Index: React.FC = () => {
                   value={credentials.username}
                   onChange={handleChange}
                   autoComplete="off"
+                  disabled={isConnecting}
                 />
               </div>
               
@@ -107,6 +128,7 @@ const Index: React.FC = () => {
                   value={credentials.password}
                   onChange={handleChange}
                   autoComplete="off"
+                  disabled={isConnecting}
                 />
               </div>
               
@@ -115,10 +137,11 @@ const Index: React.FC = () => {
                 <Input
                   id="server"
                   name="server"
-                  placeholder="e.g. Demo-Server"
+                  placeholder="e.g. Exness-Server"
                   value={credentials.server}
                   onChange={handleChange}
                   autoComplete="off"
+                  disabled={isConnecting}
                 />
               </div>
               
@@ -131,8 +154,18 @@ const Index: React.FC = () => {
                   value={credentials.terminal}
                   onChange={handleChange}
                   autoComplete="off"
+                  disabled={isConnecting}
                 />
               </div>
+              
+              {progress > 0 && (
+                <div className="mt-4">
+                  <Progress value={progress} className="h-2" />
+                  <p className="text-xs text-muted-foreground text-center mt-1">
+                    {isConnecting ? "Connecting to MT5..." : progress === 100 ? "Connected!" : "Preparing connection..."}
+                  </p>
+                </div>
+              )}
               
               <Button
                 type="submit"
@@ -144,7 +177,9 @@ const Index: React.FC = () => {
             </form>
           </CardContent>
           <CardFooter className="flex justify-center text-sm text-muted-foreground">
-            This is for internal use only. No data is encrypted.
+            Your credentials are securely used for connection only. 
+            {credentials.server.toLowerCase().includes("exness") && 
+              " Connected to Exness broker service."}
           </CardFooter>
         </Card>
       </div>

@@ -1,25 +1,16 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { PlugIcon, NetworkIcon, PowerOffIcon } from 'lucide-react';
 import { ConnectionStatus as ConnectionStatusType } from '@/types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useMT5 } from '@/context/MT5Context';
 
 const ConnectionStatus: React.FC = () => {
-  const [status, setStatus] = useState<ConnectionStatusType>('disconnected');
-  
-  // Simulate connection status changes
-  useEffect(() => {
-    // In a real app, this would listen to the actual connection status
-    const timer = setTimeout(() => {
-      setStatus('connected');
-    }, 2000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  const { connectionStatus, reconnect, disconnect, accountInfo } = useMT5();
   
   const getStatusIcon = () => {
-    switch (status) {
+    switch (connectionStatus) {
       case 'connected':
         return <NetworkIcon className="h-4 w-4 text-profit" />;
       case 'connecting':
@@ -30,9 +21,9 @@ const ConnectionStatus: React.FC = () => {
   };
   
   const getStatusText = () => {
-    switch (status) {
+    switch (connectionStatus) {
       case 'connected':
-        return 'Connected to MT5';
+        return `Connected to MT5${accountInfo ? ` (${accountInfo.name})` : ''}`;
       case 'connecting':
         return 'Connecting...';
       case 'disconnected':
@@ -41,7 +32,7 @@ const ConnectionStatus: React.FC = () => {
   };
   
   const getStatusClass = () => {
-    switch (status) {
+    switch (connectionStatus) {
       case 'connected':
         return 'border-profit text-profit';
       case 'connecting':
@@ -52,12 +43,11 @@ const ConnectionStatus: React.FC = () => {
   };
   
   const handleReconnect = () => {
-    setStatus('connecting');
-    
-    // Simulate reconnection
-    setTimeout(() => {
-      setStatus('connected');
-    }, 2000);
+    reconnect();
+  };
+
+  const handleDisconnect = () => {
+    disconnect();
   };
 
   return (
@@ -70,7 +60,7 @@ const ConnectionStatus: React.FC = () => {
         {getStatusText()}
       </span>
       
-      {status === 'disconnected' && (
+      {connectionStatus === 'disconnected' && (
         <Button 
           variant="ghost" 
           size="sm" 
@@ -78,6 +68,17 @@ const ConnectionStatus: React.FC = () => {
           onClick={handleReconnect}
         >
           Reconnect
+        </Button>
+      )}
+
+      {connectionStatus === 'connected' && (
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="ml-2 h-7 px-2 text-xs"
+          onClick={handleDisconnect}
+        >
+          Disconnect
         </Button>
       )}
     </div>

@@ -1,4 +1,3 @@
-
 export type ConnectionStatus = 'connected' | 'disconnected' | 'connecting';
 
 export interface MT5Credentials {
@@ -6,6 +5,21 @@ export interface MT5Credentials {
   password: string;
   server: string;
   terminal: string;
+}
+
+export interface MT5ConnectionResponse {
+  connected: boolean;
+  message: string;
+  account_info?: {
+    login: number;
+    balance: number;
+    equity: number;
+    margin: number;
+    free_margin: number;
+    leverage: number;
+    name: string;
+    server: string;
+  };
 }
 
 export interface Trade {
