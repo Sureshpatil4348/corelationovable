@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   LayoutDashboard,
@@ -57,12 +58,12 @@ export const navigationItems = [
 ];
 
 const Sidebar: React.FC = () => {
-  const { accountInfo, disconnect, isConnected } = useMT5();
+  const { accountInfo, disconnect, connectionStatus } = useMT5();
   const { toast } = useToast();
 
   const handleDisconnect = async () => {
     const result = await disconnect();
-    if (result.disconnected) {
+    if (result) {
       toast({
         title: "Disconnected",
         description: "Successfully disconnected from MT5.",
@@ -96,7 +97,7 @@ const Sidebar: React.FC = () => {
           <DropdownMenuContent className="w-80" align="end" forceMount>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {isConnected && (
+            {connectionStatus === "connected" && (
               <DropdownMenuItem onClick={handleDisconnect}>
                 Disconnect MT5
               </DropdownMenuItem>
